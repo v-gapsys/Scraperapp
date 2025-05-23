@@ -5,7 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 from lxml import html
 import time
-from typing import List
+from typing import List, Dict, Optional
 from .config import (
     BASE_URL,
     JOB_URL_PREFIX,
@@ -20,7 +20,16 @@ from .models import JobListing
 from .logger import setup_logger
 
 class JobScraper:
-    def __init__(self, base_url=BASE_URL, max_jobs=MAX_JOBS):
+    """Scraper for collecting job listings from UZT."""
+
+    def __init__(self, base_url: str = BASE_URL, max_jobs: int = MAX_JOBS) -> None:
+        """
+        Initialize the JobScraper.
+
+        Args:
+            base_url (str): The base URL for the job board.
+            max_jobs (int): The maximum number of jobs to scrape.
+        """
         self.base_url = base_url
         self.job_url_prefix = JOB_URL_PREFIX
         self.headers = HEADERS
@@ -29,7 +38,7 @@ class JobScraper:
         self.session = requests.Session()
         self.logger = setup_logger()
 
-    def get_listing_links(self):
+    def get_listing_links(self) -> None:
         """Collect exactly MAX_JOBS number of job listings."""
         start = 0
         while len(self.jobs) < self.max_jobs:
@@ -63,7 +72,16 @@ class JobScraper:
         
         self.logger.info(f"Surinkta iš viso: {len(self.jobs)} skelbimų (tikslinis skaičius: {self.max_jobs})")
 
-    def extract_job_summary(self, job):
+    def extract_job_summary(self, job: BeautifulSoup) -> Dict[str, str]:
+        """
+        Extract job summary from a job element.
+
+        Args:
+            job (BeautifulSoup): The job element to extract data from.
+
+        Returns:
+            Dict[str, str]: A dictionary containing the job summary.
+        """
         title = job.select_one(".title strong")
         company = job.select_one(".company")
         location = job.select_one(".location")
@@ -80,14 +98,24 @@ class JobScraper:
             "Nuoroda": full_url
         }
 
-    def enrich_job_details(self):
+    def enrich_job_details(self) -> None:
+        """Enrich job listings with additional details."""
         for i, job in enumerate(self.jobs):
             self.logger.info(f"🔍 {i + 1}/{len(self.jobs)} Tikrinama: {job.url}")
             details = self.scrape_job_details(job.url)
             job.details.update(details)
             time.sleep(DELAY_BETWEEN_JOBS)
 
-    def scrape_job_details(self, url):
+    def scrape_job_details(self, url: str) -> Dict[str, str]:
+        """
+        Scrape additional details from a job page.
+
+        Args:
+            url (str): The URL of the job page.
+
+        Returns:
+            Dict[str, str]: A dictionary containing the job details.
+        """
         results = {}
         try:
             r = self.session.get(url, headers=self.headers, timeout=REQUEST_TIMEOUT)
@@ -112,7 +140,13 @@ class JobScraper:
             results["Klaida"] = str(e)
         return results
 
-    def save_to_excel(self, filename=OUTPUT_FILENAME):
+    def save_to_excel(self, filename: str = OUTPUT_FILENAME) -> None:
+        """
+        Save job listings to an Excel file.
+
+        Args:
+            filename (str): The name of the Excel file to save to.
+        """
         df = pd.DataFrame(self.jobs)
         df.to_excel(filename, index=False)
         print(f"✅ Išsaugota į: {filename}") 
