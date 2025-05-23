@@ -11,7 +11,7 @@ BASE_URL = "https://uzt.lt"
 JOB_URL_PREFIX = "/laisvos-darbo-vietos/436/results"
 
 # Maximum number of jobs to scrape
-MAX_JOBS = 42
+MAX_JOBS = 17
 
 # Request headers
 HEADERS = {

@@ -5,7 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 from lxml import html
 import time
-from typing import List, Dict, Optional
+from typing import List, Dict
 from .config import (
     BASE_URL,
     JOB_URL_PREFIX,
@@ -18,6 +18,7 @@ from .config import (
 )
 from .models import JobListing
 from .logger import setup_logger
+import pandas as pd
 
 class JobScraper:
     """Scraper for collecting job listings from UZT."""
@@ -38,6 +39,17 @@ class JobScraper:
         self.session = requests.Session()
         self.logger = setup_logger()
 
+    def process_job_elements(self, job_elements: List[BeautifulSoup]) -> None:
+        """Process job elements and add them to the jobs list."""
+        for job in job_elements:
+            if len(self.jobs) >= self.max_jobs:
+                self.logger.info(f"Pasiektas maksimalus skelbimų skaičius ({self.max_jobs})")
+                return
+            job_data = self.extract_job_summary(job)
+            self.jobs.append(JobListing.from_dict(job_data))
+            self.logger.info(f"Surinkta: {job_data['Pavadinimas']}")
+            time.sleep(DELAY_BETWEEN_JOBS)
+
     def get_listing_links(self) -> None:
         """Collect exactly MAX_JOBS number of job listings."""
         start = 0
@@ -51,25 +63,12 @@ class JobScraper:
                 job_elements = soup.select("div.list > a")
                 if not job_elements:
                     break
-                
-                # Process jobs until we reach MAX_JOBS
-                for job in job_elements:
-                    # Strict check before processing each job
-                    if len(self.jobs) >= self.max_jobs:
-                        self.logger.info(f"Pasiektas maksimalus skelbimų skaičius ({self.max_jobs})")
-                        return
-                        
-                    job_data = self.extract_job_summary(job)
-                    self.jobs.append(JobListing.from_dict(job_data))
-                    self.logger.info(f"Surinkta: {job_data['Pavadinimas']}")
-                    time.sleep(DELAY_BETWEEN_JOBS)
-                    
+                self.process_job_elements(job_elements)
             except Exception as e:
                 self.logger.error(f"Klaida: {e}")
                 break
             start += 20
             time.sleep(DELAY_BETWEEN_PAGES)
-        
         self.logger.info(f"Surinkta iš viso: {len(self.jobs)} skelbimų (tikslinis skaičius: {self.max_jobs})")
 
     def extract_job_summary(self, job: BeautifulSoup) -> Dict[str, str]:
