@@ -13,6 +13,7 @@ Scraperapp/
 │   │   ├── models.py      # Data models
 │   │   ├── scraper.py     # Main scraper implementation
 │   │   ├── storage.py     # Storage handlers
+│   │   ├── analysis.py    # Data analysis tools
 │   │   └── logger.py      # Logging configuration
 │   └── main.py            # Main script to run the scraper
 ├── test/                  # Test directory
@@ -33,6 +34,11 @@ Scraperapp/
 - Comprehensive logging
 - Error handling and retry mechanism
 - Random delays to avoid detection
+- Advanced salary analysis using NumPy
+  - Statistical analysis (mean, median, standard deviation)
+  - Salary distribution analysis
+  - Location-based salary analysis
+  - Salary range and quartile calculations
 
 ## Installation
 
@@ -57,7 +63,7 @@ pip install -r requirements.txt
 
 The scraper's behavior can be configured in `src/scraper/config.py`. Key settings include:
 
-- `MAX_JOBS`: Maximum number of jobs to scrape (default: 10)
+- `MAX_JOBS`: Maximum number of jobs to scrape (default: 17)
 - `DELAY_BETWEEN_JOBS`: Delay between scraping individual jobs
 - `DELAY_BETWEEN_PAGES`: Delay between scraping pages
 - `OUTPUT_FILENAME`: Base name for output files
@@ -80,12 +86,36 @@ The scraper will:
 - Extract detailed information for each job
 - Save the results in both Excel and CSV formats in the `output` directory
 - Create log files in the `logs` directory
+- Perform salary analysis and save results to `output/salary_analysis.json`
 
 ## Output
 
-The scraper generates two types of output files in the `output` directory:
+The scraper generates several output files in the `output` directory:
 - `uzt_adds.xlsx`: Excel file with job listings
 - `uzt_adds.csv`: CSV file with job listings
+- `salary_analysis.json`: Detailed salary analysis including:
+  - Overall statistics (mean, median, standard deviation)
+  - Salary ranges and quartiles
+  - Location-based salary averages
+  - Distribution data
+
+## Salary Analysis
+
+The scraper includes advanced salary analysis capabilities:
+
+1. Statistical Analysis:
+   - Mean and median salary calculations
+   - Standard deviation
+   - Minimum and maximum salaries
+   - Quartile analysis
+
+2. Location-based Analysis:
+   - Average salaries by city/location
+   - Regional salary comparisons
+
+3. Distribution Analysis:
+   - Salary distribution across different ranges
+   - Histogram data for visualization
 
 ## Logging
 
@@ -103,10 +133,7 @@ Log files are stored in the `logs` directory with timestamps in their names. The
 - lxml
 - pandas
 - openpyxl
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
+- numpy
 
 ## Testing
 
@@ -119,4 +146,8 @@ python -m unittest test/test_scraper.py -v
 The test suite includes:
 - Unit tests for the scraper functionality
 - Mocked HTTP responses to avoid actual web requests during testing
-- Verification of job listing collection and processing 
+- Verification of job listing collection and processing
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details. 
