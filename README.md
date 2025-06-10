@@ -15,6 +15,9 @@ Scraperapp/
 │   │   ├── storage.py     # Storage handlers
 │   │   └── logger.py      # Logging configuration
 │   └── main.py            # Main script to run the scraper
+├── test/                  # Test directory
+│   ├── __init__.py        # Test package initialization
+│   └── test_scraper.py    # Test cases for the scraper
 ├── output/                # Output directory for scraped data
 ├── logs/                  # Log files directory
 ├── requirements.txt       # Project dependencies
@@ -103,4 +106,17 @@ Log files are stored in the `logs` directory with timestamps in their names. The
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Testing
+
+To run the tests:
+
+```bash
+python -m unittest test/test_scraper.py -v
+```
+
+The test suite includes:
+- Unit tests for the scraper functionality
+- Mocked HTTP responses to avoid actual web requests during testing
+- Verification of job listing collection and processing 
