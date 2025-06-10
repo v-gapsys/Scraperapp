@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch, MagicMock
 from bs4 import BeautifulSoup
-from .scraper import JobScraper
+from src.scraper.scraper import JobScraper
 
 class TestJobScraper(unittest.TestCase):
     def setUp(self):
