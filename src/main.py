@@ -7,7 +7,7 @@ from scraper.scraper import JobScraper
 from scraper.config import MAX_JOBS, REFERENCE_JOB
 from scraper.storage import ExcelStorage, CSVStorage
 from scraper.analysis import SalaryAnalyzer
-from scraper.similarity import compute_similarity
+from scraper.similarity import SimilarityAnalyzer
 from scraper.logger import setup_logger
 import json
 import os
@@ -111,16 +111,17 @@ def main():
     sys.stdout.flush()
     logger.info(f"\n✅ Analysis results saved to: {analysis_path}")
 
-    # Compute similarity
-    similarity_results = compute_similarity(REFERENCE_JOB, scraper.jobs)
+    # Perform similarity analysis
+    similarity_analyzer = SimilarityAnalyzer()
+    similarity_results = similarity_analyzer.compute_similarity(REFERENCE_JOB, scraper.jobs)
     sys.stdout.write("\nJob Offers Listed by Similarity:\n")
     sys.stdout.flush()
     logger.info("\nJob Offers Listed by Similarity:")
     
-    for job, similarity in similarity_results:
-        sys.stdout.write(f"Job: {job.title} - Similarity: {similarity:.4f}\n")
+    for job, score in similarity_results:
+        sys.stdout.write(f"Job: {job.title} - Similarity: {score:.4f}\n")
         sys.stdout.flush()
-        logger.info(f"Job: {job.title} - Similarity: {similarity:.4f}")
+        logger.info(f"Job: {job.title} - Similarity: {score:.4f}")
 
     # Save similarity rankings to CSV
     similarity_csv_path = os.path.join('output', 'similarity_rankings.csv')
