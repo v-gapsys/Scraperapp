@@ -8,9 +8,12 @@ from scraper.config import MAX_JOBS
 from scraper.storage import ExcelStorage, CSVStorage
 from scraper.analysis import SalaryAnalyzer
 import json
+import os
 
 def main():
     """Main function to run the scraper."""
+    # Ensure output directory exists
+    os.makedirs('output', exist_ok=True)
     # Print MAX_JOBS value for debugging
     print(f"[DEBUG] MAX_JOBS from config: {MAX_JOBS}")
     # Initialize scraper
