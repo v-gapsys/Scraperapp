@@ -11,7 +11,7 @@ BASE_URL = "https://uzt.lt"
 JOB_URL_PREFIX = "/laisvos-darbo-vietos/436/results"
 
 # Maximum number of jobs to scrape
-MAX_JOBS = 17
+MAX_JOBS = 15
 
 # Request headers
 HEADERS = {
@@ -43,3 +43,12 @@ OUTPUT_FILENAME = "uzt_adds.xlsx"
 
 # Request timeout (in seconds)
 REQUEST_TIMEOUT = 10 
+
+# Reference job description for similarity comparison
+REFERENCE_JOB = {
+    'Darbo pobūdis': 'Teisininkas',
+    'Darbo vieta (miestas)': 'Vilnius',
+    'Pageidaujamas atlyginimas': '2000',
+    'Turima patirtis': '2 metai patirtis',
+    'Darbo aprašymas': 'kruopštus, atsakingas, gebu tvarkyti dokumentus, turiu vairuotojo pažymėjimą'
+} 
